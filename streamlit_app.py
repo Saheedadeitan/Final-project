@@ -1,6 +1,5 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
+import joblib
 import pmdarima as pm
 
 uploaded_file = st.file_uploader("Upload CSV file", type=['csv'])
@@ -17,11 +16,17 @@ model = pm.auto_arima(data.Sales, start_p=0, start_q=0, max_p=3, max_q=3, m=12,m
                       error_action='ignore', 
                       suppress_warnings=True, 
                       stepwise=True) 
-
 st.title('Auto-ARIMA Forecasting')
 
-forecast = model.predict(n_periods=12)
+if len(forecast) > 0:
+    st.write(f"Estimated Price: ${forecast.iloc[0]:,.2f}")
+else:
+    st.write("No forecast available.")
+
+forecast = model.predict(n_periods=6)
 st.line_chart(forecast)
 
   # Display the prediction
-st.write(f"Estimated Price: ${forecast[0]:,.2f}")
+st.write(f"Estimated Price: ${forecast.iloc[0]:,.2f}")
+
+print(forecast)
